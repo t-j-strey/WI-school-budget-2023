@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "msedge",
+            "name": "https://sfs.dpi.wi.gov/sfsdw/CompCostReport.aspx",
+            "request": "launch",
+            "url": "https://sfs.dpi.wi.gov/sfsdw/CompCostReport.aspx"
+        }
+    ]
+}
