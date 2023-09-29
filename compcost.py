@@ -13,21 +13,18 @@ class CompcostSpider(scrapy.Spider):
         }
 
         formdata= {
-            '__EVENTTARGET' : '',
-            '__EVENTARGUMENT':'',
-            '__VIEWSTATEGENERATOR' : 'E4E6F4A2',
-            'ctl00$MainContent$selFiscalYear' : '2022',
+            #'__EVENTTARGET' : '',
+            #'__EVENTARGUMENT':'',
+            'ctl00$MainContent$selFiscalYear' : '2021',
             'ctl00$MainContent$selSchoolDist' : '0007',
             'ctl00$MainContent$rbOrderListBy':	'Name',
             'ctl00$MainContent$btnSubmitAllAgencies':	'Show+All+Agencies',
-            'ctl00$MainContent$SortValue':	'NAME',
-            'ctl00$MainContent$SortOrder':	'ASC'
         }
-        inspect_response(self,response)
-        #yield FormRequest.from_response(response,
-        #                          formdata=formdata,
-        #                          headers=headers,
-        #                          callback=self.tab2)
+        #inspect_response(self,response)
+        yield FormRequest.from_response(response,
+                                  formdata=formdata,
+                                  headers=headers,
+                                  callback=self.tab2)
        
        
 
