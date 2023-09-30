@@ -1,6 +1,7 @@
 import scrapy
 from scrapy import FormRequest
 from scrapy.shell import inspect_response
+import pandas as pd
 
 class CompcostSpider(scrapy.Spider):
     name = "compcost"
@@ -24,14 +25,13 @@ class CompcostSpider(scrapy.Spider):
         yield FormRequest.from_response(response,
                                   formdata=formdata,
                                   headers=headers,
-                                  callback=self.tab2)
+                                  callback=self.datacapture)
         
        
     def datacapture(self,response):
-        for resp in response.xpath('/html/body/form/div[2]/div[3]/div/table/tbody/tr[1]/td[1]'):
-            data = {"data":resp.get()}
-            yield data
-
+       dfs = pd.read_html(response.text)
+       for i, df in enumerate(dfs):
+           df.to_csv(f'data_{i}.csv')
 
     def tab2(self,response):
         inspect_response(response,self)
