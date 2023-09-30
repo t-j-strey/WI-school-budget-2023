@@ -4,8 +4,11 @@ from scrapy.shell import inspect_response
 
 class CompcostSpider(scrapy.Spider):
     name = "compcost"
-    #allowed_domains = ["https://sfs.dpi.wi.gov"]
     start_urls = ["https://sfs.dpi.wi.gov/sfsdw/CompCostReport.aspx"]
+
+    custom_settings = {
+        'FEEDS' : {'data/%(name)s/%(name)s_%(time)s.csv': {'format':'csv','overwrite':True}}
+    }
 
     def parse(self, response):
         headers = {
@@ -13,21 +16,22 @@ class CompcostSpider(scrapy.Spider):
         }
 
         formdata= {
-            #'__EVENTTARGET' : '',
-            #'__EVENTARGUMENT':'',
             'ctl00$MainContent$selFiscalYear' : '2021',
             'ctl00$MainContent$selSchoolDist' : '0007',
             'ctl00$MainContent$rbOrderListBy':	'Name',
             'ctl00$MainContent$btnSubmitAllAgencies':	'Show+All+Agencies',
         }
-        #inspect_response(self,response)
         yield FormRequest.from_response(response,
                                   formdata=formdata,
                                   headers=headers,
                                   callback=self.tab2)
+        
        
-       
+    def datacapture(self,response):
+        for resp in response.xpath('/html/body/form/div[2]/div[3]/div/table/tbody/tr[1]/td[1]'):
+            data = {"data":resp.get()}
+            yield data
+
 
     def tab2(self,response):
         inspect_response(response,self)
-        print("Tab2Running")
