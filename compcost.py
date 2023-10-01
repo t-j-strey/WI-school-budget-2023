@@ -29,9 +29,15 @@ class CompcostSpider(scrapy.Spider):
         
        
     def datacapture(self,response):
-       dfs = pd.read_html(response.text)
-       for i, df in enumerate(dfs):
-           df.to_csv(f'data_{i}.csv')
+        #dfs = pd.read_html(response.text)
+        dfs = pd.read_html(response,attrs={'id':'ct100_MainContent_Grid_StandardReport'})
+        mriter = pd.ExcelWriter(data.xlsx,engine='xlsxwriter')
+        dfs.to_excel('data.xlsx',index = False, header = True)
+        #for i, df in enumerate(dfs):
+        #    if i == 3: 
+        #        df.to_csv(f'data_{i}.csv')
+
+    
 
     def tab2(self,response):
         inspect_response(response,self)
