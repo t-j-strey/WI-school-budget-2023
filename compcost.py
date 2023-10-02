@@ -25,14 +25,16 @@ class CompcostSpider(scrapy.Spider):
         yield FormRequest.from_response(response,
                                   formdata=formdata,
                                   headers=headers,
-                                  callback=self.datacapture)
+                                  #callback=self.tab2)
+                                  callback = self.datacapture)
         
        
     def datacapture(self,response):
-        #dfs = pd.read_html(response.text)
-        dfs = pd.read_html(response,attrs={'id':'ct100_MainContent_Grid_StandardReport'})
-        mriter = pd.ExcelWriter(data.xlsx,engine='xlsxwriter')
-        dfs.to_excel('data.xlsx',index = False, header = True)
+        #dfs = pd.read_html(response,attrs={'id':'ct100_MainContent_Grid_StandardReport'})
+        match = "Data For Comparative Cost Per Member"
+        dfs = pd.read_html(response,match = match)
+        writer = pd.ExcelWriter('data.xlsx',engine='xlsxwriter')
+        dfs[1].to_excel('data.xlsx',index = False, header = True)
         #for i, df in enumerate(dfs):
         #    if i == 3: 
         #        df.to_csv(f'data_{i}.csv')
