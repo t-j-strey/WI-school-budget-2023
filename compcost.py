@@ -2,6 +2,7 @@ import scrapy
 from scrapy import FormRequest
 from scrapy.shell import inspect_response
 import pandas as pd
+import numpy as np
 
 class CompcostSpider(scrapy.Spider):
     name = "compcost"
@@ -32,11 +33,19 @@ class CompcostSpider(scrapy.Spider):
        
     def datacapture(self,response):
         dfs = pd.read_html(response.text)
-        #dfs = pd.read_html(response,match='Data For Comparative Cost Per Member')
-        #dfs = pd.read_html(response,attrs={'id':'ct100_MainContent_Grid_StandardReport'})
-        writer = pd.ExcelWriter('data.xlsx',engine='xlsxwriter')
-        dfs[0].to_excel(writer,index = False, header = True)
-       
+        #dfs = pd.read_html(response,attrs={'id':'ctl00_MainContent_Grid_StandardReport'})
+        with pd.ExcelWriter(
+            "data.xlsx",
+            engine = 'xlsxwriter'
+        ) as writer:
+            dfs[3].to_excel(writer,
+                            sheet_name='Comp Cost Per Member',
+                            index = False, 
+                            header = True, 
+                            merge_cells=True
+                            )
+
+        
 
     
 
