@@ -31,8 +31,8 @@ class CompcostSpider(scrapy.Spider):
         
        
     def datacapture(self,response):
-        #dfs = pd.read_html(response.text)
-        dfs = pd.read_html(response,match='Data For Comparative Cost Per Member')
+        dfs = pd.read_html(response.text)
+        #dfs = pd.read_html(response,match='Data For Comparative Cost Per Member')
         #dfs = pd.read_html(response,attrs={'id':'ct100_MainContent_Grid_StandardReport'})
         writer = pd.ExcelWriter('data.xlsx',engine='xlsxwriter')
         dfs[0].to_excel(writer,index = False, header = True)
