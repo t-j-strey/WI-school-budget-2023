@@ -11,6 +11,9 @@ class CompcostSpider(scrapy.Spider):
     custom_settings = {
         #'FEEDS' : {'data/%(name)s/%(name)s_%(time)s.csv': {'format':'csv','overwrite':True}}
     }
+
+    CostCompDF = pd.DataFrame()
+
     for yrs in range(2020,2021): 
         stryears = str(yrs)
         
@@ -25,21 +28,39 @@ class CompcostSpider(scrapy.Spider):
                 'ctl00$MainContent$rbOrderListBy':	'Name',
                 'ctl00$MainContent$btnSubmitAllAgencies':	'Show+All+Agencies',
             }
-            #yield FormRequest.from_response(response,
-            results = FormRequest.from_response(response,
+            print("\n\n")
+            print("FormRequest Command next")
+            print("\n\n")
+            return FormRequest.from_response(response,
+            #results = FormRequest.from_response(response,
                                     formdata=formdata,
                                     headers=headers,
                                     callback=self.datacapture)
                                     #callback=self.tab2)
+            print("\n\n")
+            print("FormRequest Commanded")
+            print("\n\n")
 
-            print(results)
-            
 
+
+        print("\n\n")
+        print("FormRequest Complete")
+        #print(self.CompCostDF)
+        print("\n\n")
 
     def datacapture(self,response):
         dfs = pd.read_html(response.text)
-        df = dfs[3]
-        yield df
+        print("\n\n")
+        print("datacapture")
+        print(dfs[3])
+        print("\n\n")
+        CompCostDF = CompCostDF.append(dfs[3])
+        print("\n\n")
+        print("appended Data")
+        print(CompCostDF)
+        print("\n\n")
+        #yield dfs[3]
+
 
      #   length = len(df.index)
      #   yrdata = np.full((length),self.yrs)
