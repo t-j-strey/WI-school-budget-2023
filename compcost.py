@@ -28,62 +28,32 @@ class CompcostSpider(scrapy.Spider):
                 'ctl00$MainContent$rbOrderListBy':	'Name',
                 'ctl00$MainContent$btnSubmitAllAgencies':	'Show+All+Agencies',
             }
-            print("\n\n")
-            print("FormRequest Command next")
-            print("\n\n")
             return FormRequest.from_response(response,
             #results = FormRequest.from_response(response,
                                     formdata=formdata,
                                     headers=headers,
                                     callback=self.datacapture)
                                     #callback=self.tab2)
-            print("\n\n")
-            print("FormRequest Commanded")
-            print("\n\n")
-
-
-
-        print("\n\n")
-        print("FormRequest Complete")
-        #print(self.CompCostDF)
-        print("\n\n")
 
     def datacapture(self,response):
         dfs = pd.read_html(response.text)
-        print("\n\n")
-        print("datacapture")
-        print(dfs[3])
-        print("\n\n")
-        CompCostDF = CompCostDF.append(dfs[3])
-        print("\n\n")
-        print("appended Data")
-        print(CompCostDF)
-        print("\n\n")
-        #yield dfs[3]
-
-
-     #   length = len(df.index)
-     #   yrdata = np.full((length),self.yrs)
-     #   df.insert(1,"Year",yrdata)
+        df = dfs[3]
+        length = len(df.index)
+        yrdata = np.full((length),self.yrs)
+        df.insert(1,"Year",yrdata)
         #dfs = pd.read_html(response,attrs={'id':'ctl00_MainContent_Grid_StandardReport'})
-        
-        
-    #with pd.ExcelWriter(
-    #    "CompCostPerMember.xlsx",
-    #    engine = 'openpyxl',
-    #    mode ='w'
-    #) as writer:
-    #    self.results.to_excel(writer,
-    #                    sheet_name='Comp Cost Per Member',
-    #                    index = False, 
-    #                    header = True, 
-    #                    merge_cells=True
-    #                    )
-           
-
-        
-
-    
+  
+        with pd.ExcelWriter(
+            "CompCostPerMember.xlsx",
+            engine = 'openpyxl',
+            mode ='w'
+        ) as writer:
+            df.to_excel(writer,
+                            sheet_name='Comp Cost Per Member',
+                            index = False, 
+                            header = True, 
+                            merge_cells=True
+                            )
 
     def tab2(self,response):
         inspect_response(response,self)
