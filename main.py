@@ -1,15 +1,31 @@
-import compcost
-import scrapy
-from scrapy.crawler import CrawlerProcess
+#import scrapy
+
+from scrapy.utils.log import configure_logging
+
+from twisted.internet import task, reactor, defer
+#from scrapy.crawler import CrawlerProcess
+from WICompCost.WICompCost.spiders.compcost import CompcostSpider
+from scrapy.crawler import CrawlerRunner
+from scrapy.utils.project import get_project_settings
 
 
-print('Run Scraper')
+def main():
+    configure_logging()
+    settings = get_project_settings()
+    runner = CrawlerRunner(settings)
+    
 
-process = CrawlerProcess(
-    settings={
-        
-    }
-)
+    @defer.inlineCallbacks
+    def crawl():
+        yield runner.crawl(CompcostSpider)
+        #d.addBoth(lambda _: reactor.stop())
+        #add more spiders here
+        reactor.stop()
 
-#process.crawl()
+    crawl()
+    reactor.run()
 
+
+# this only runs if the module was *not* imported
+if __name__ == "__main__":
+    main()
