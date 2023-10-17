@@ -10,4 +10,6 @@ from itemadapter import ItemAdapter
 
 class WicompcostPipeline:
     def process_item(self, item, spider):
+        print("\n Pipeline opened! \n")
+        item.save()
         return item
