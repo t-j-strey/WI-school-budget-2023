@@ -5,13 +5,13 @@ import numpy as np
 import io
 
 
-class CompcostSpider(scrapy.Spider):
-    name = "compcost"
+class ComprevSpider(scrapy.Spider):
+    name = "comprev"
     allowed_domains = ["sfs.dpi.wi.gov"]
-    start_urls = ["https://sfs.dpi.wi.gov/sfsdw/CompCostReport.aspx"]
+    start_urls = ["https://sfs.dpi.wi.gov/sfsdw/CompRevReport.aspx"]
     custom_settings = {
         'FEEDS' : {
-            'CompCostout.csv' : {
+            'CompRevOut.csv' : {
                 'format': 'csv'
             }
         }
