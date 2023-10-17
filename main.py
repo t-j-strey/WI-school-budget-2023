@@ -29,8 +29,14 @@ def main():
 
     crawl()
     reactor.run() # type: ignore
-    print("\n Items in the list:",items,"\n")    
+    print("\n Items in the list:",items,"\n")  
+      
+#Pseudo-code from github scrapy issue 3606
+#runner = CrawlerRunner()
 
+#d = runner.crawl(MySpider)
+#d.addBoth(lambda _: reactor.stop())
+#reactor.run() # the script will block here until the crawling is finished
 
 
 
