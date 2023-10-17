@@ -1,14 +1,25 @@
 import scrapy
-from scrapy import FormRequest
+from scrapy import FormRequest,Request
 import pandas as pd
 import numpy as np
 import io
+import logging
 
 
 class CompcostSpider(scrapy.Spider):
     name = "compcost"
+
+    def __init__(self,year=None, stdreport="", *args, **kwargs):
+        super(CompcostSpider,self).__init__(*args,**kwargs)
+        self.stryear = year
+        self.url = stdreport
+        logging.getLogger('scrapy').setLevel(logging.WARNING)
+
+    def start_requests(self):
+        yield Request(self.url,self.parse)
+
     allowed_domains = ["sfs.dpi.wi.gov"]
-    start_urls = ["https://sfs.dpi.wi.gov/sfsdw/CompCostReport.aspx"]
+    #start_urls = ["https://sfs.dpi.wi.gov/sfsdw/CompCostReport.aspx"]
     custom_settings = {
         'FEEDS' : {
             'CompCostout.csv' : {
@@ -16,9 +27,7 @@ class CompcostSpider(scrapy.Spider):
             }
         }
     }
-    year = 2021
-    stryear = str(year)
-
+    
     def parse(self, response):
         headers = {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -40,7 +49,7 @@ class CompcostSpider(scrapy.Spider):
         dfs = pd.read_html(iostring)
         df = dfs[3]
         length = len(df.index)
-        yrdata = np.full((length),self.year)
+        yrdata = np.full((length),self.stryear)
         df.insert(1,"Year",yrdata)
         print(df)
         yield df

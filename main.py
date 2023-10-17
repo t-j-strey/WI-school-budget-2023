@@ -15,8 +15,8 @@ def main():
 
     @defer.inlineCallbacks
     def crawl():
-        yield runner.crawl(CompcostSpider)
-        yield runner.crawl(ComprevSpider)
+        yield runner.crawl(CompcostSpider,year = "2019",stdreport="https://sfs.dpi.wi.gov/sfsdw/CompCostReport.aspx")
+        #yield runner.crawl(ComprevSpider)
         #add more spiders here
         reactor.stop() # type: ignore
 
