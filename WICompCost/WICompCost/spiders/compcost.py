@@ -21,11 +21,11 @@ class CompcostSpider(scrapy.Spider):
     allowed_domains = ["sfs.dpi.wi.gov"]
     #start_urls = ["https://sfs.dpi.wi.gov/sfsdw/CompCostReport.aspx"]
     custom_settings = {
-        'FEEDS' : {
-            'CompCostout.csv' : {
-                'format': 'csv'
-            }
-        }
+    #    'FEEDS' : {
+    #        'CompCostout.csv' : {
+    #            'format': 'csv'
+    #        }
+    #    }
     }
     
     def parse(self, response):
@@ -53,4 +53,3 @@ class CompcostSpider(scrapy.Spider):
         df.insert(1,"Year",yrdata)
         print(df)
         yield df
-        

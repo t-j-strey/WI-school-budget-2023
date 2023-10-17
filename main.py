@@ -2,7 +2,6 @@
 from scrapy.utils.log import configure_logging
 from twisted.internet import task, reactor, defer
 from WICompCost.WICompCost.spiders.compcost import CompcostSpider
-from WICompCost.WICompCost.spiders.comprev import ComprevSpider
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.project import get_project_settings
 
