@@ -9,8 +9,8 @@
 
 BOT_NAME = "WICompCost"
 
-SPIDER_MODULES = ["WICompCost.spiders"]
-NEWSPIDER_MODULE = "WICompCost.spiders"
+SPIDER_MODULES = ["WICompCost.WICompCost.spiders"]
+NEWSPIDER_MODULE = "WICompCost.WICompCost.spiders"
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -64,7 +64,7 @@ ROBOTSTXT_OBEY = True
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     
-    "WICompCost.pipelines.WicompcostPipeline": 300,
+    "WICompCost.WICompCost.pipelines.WicompcostPipeline": 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -90,5 +90,5 @@ ITEM_PIPELINES = {
 
 # Set settings whose default value is deprecated to a future-proof value
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
-TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
+#TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"

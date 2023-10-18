@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import io
 import logging
+import os
 
 
 class CompcostSpider(scrapy.Spider):
