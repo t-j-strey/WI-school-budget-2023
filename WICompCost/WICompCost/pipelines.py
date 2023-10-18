@@ -6,10 +6,15 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
+import pandas as pd
 
+#global variable to keep result in memory
+result = []
 
 class WicompcostPipeline:
     def process_item(self, item, spider):
         print("\n Pipeline opened! \n")
-        item.save()
-        return item
+        df = pd.DataFrame.from_dict(item)
+        print(df) #unwrap and print the dataframe to verify function
+        result.append(dict(item))
+        return df
