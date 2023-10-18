@@ -1,11 +1,11 @@
 
 from scrapy.utils.log import configure_logging
-from twisted.internet import task, reactor, defer
+from twisted.internet import reactor, defer
 from WICompCost.WICompCost.spiders.compcost import CompcostSpider
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.project import get_project_settings
-from scrapy.settings import Settings
 import os
+
 PROJECT_ROOT = "D:\\Github\\WI-school-budget-2023"
 os.chdir(PROJECT_ROOT)
 
@@ -17,8 +17,6 @@ end_year = 2018 #inclusive
 items = []
 
 def main():
-
-    
 
     configure_logging()
     settings_file_path = 'WICompCost.WICompCost.settings'   #Relative Location of Settings File
@@ -36,15 +34,7 @@ def main():
 
     crawl()
     reactor.run() # type: ignore
-    print("\n Items in the list:",items,"\n")  
 
-    #for report in std_reports:  #loop through the list of available standard reports
-    #    for i in range(start_year,end_year + 1):  #loop through range of years
-    #        runner.crawl(CompcostSpider,year = str(i),stdreport= report)
-    #        d = runner.join()
-    #        d.addBoth(lambda _: reactor.stop()) #type: ignore
-            #print("\n Output:",d,"\n")
-    #reactor.run() #type: ignore
 
 # this only runs if the module was *not* imported
 if __name__ == "__main__":
