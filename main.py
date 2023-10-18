@@ -14,7 +14,7 @@ os.chdir(PROJECT_ROOT)
 std_reports = ["https://sfs.dpi.wi.gov/sfsdw/CompCostReport.aspx"]
                #"https://sfs.dpi.wi.gov/sfsdw/CompRevReport.aspx"]
 start_year = 2018
-end_year = 2018 #inclusive
+end_year = 2020 #inclusive
 
 items = []
 
