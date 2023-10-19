@@ -52,6 +52,5 @@ class CompcostSpider(scrapy.Spider):
         length = len(df.index)
         yrdata = np.full((length),self.stryear)
         df.insert(1,"Year",yrdata)
-        #print(df)
         yield df.to_dict()
         

@@ -8,9 +8,9 @@
 from itemadapter import ItemAdapter
 import pandas as pd
 
-class WicompcostPipeline:
+items = [] #collection of returned items
+
+class WicompcostPipeline:   
     def process_item(self, item, spider):
-        df = pd.DataFrame.from_dict(item)
-        print(df) #unwrap and print the dataframe to verify function
-        #result.append(dict(item))
-        return df
+        items.append(item)
+        
