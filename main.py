@@ -5,7 +5,6 @@ from WICompCost.WICompCost.spiders.compcost import CompcostSpider
 from WICompCost.WICompCost import pipelines
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.project import get_project_settings
-from scrapy.utils.reactor import install_reactor
 import os
 import pandas as pd
 
@@ -35,15 +34,29 @@ def main():
             for i in range(start_year,end_year + 1):  #loop through range of years            
                yield runner.crawl(CompcostSpider,year = str(i),stdreport= report)
                 #add more spiders here
+            comp_df = pd.DataFrame()
+            for item in pipelines.items:
+                df = pd.DataFrame.from_dict(item)
+                comp_df = pd.concat([comp_df,df])
+            print(comp_df)
+
+            #with pd.ExcelWriter(
+            #    "ReportName.xlsx",
+            #    engine = 'openpyxl',
+            #    mode = 'w'
+            #) as writer:
+            #    comp_df.to_excel(writer,
+            #                     sheet_name='sheet1',
+            #                     index = False,
+            #                     header = True,
+            #                     merge_cells = True)
+            
         reactor.stop() # type: ignore
         
     crawl()
     reactor.run() # type: ignore
 
-    for item in pipelines.items:
-        df = pd.DataFrame.from_dict(item)
-        print("\n\n dataframe in main!")
-        print(df)
+   
     
 
 
