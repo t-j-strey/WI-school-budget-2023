@@ -32,24 +32,28 @@ def main():
     def crawl():
         for report in std_reports:  #loop through the list of available standard reports
             for i in range(start_year,end_year + 1):  #loop through range of years            
-               yield runner.crawl(CompcostSpider,year = str(i),stdreport= report)
+                yield runner.crawl(CompcostSpider,year = str(i),stdreport= report)
                 #add more spiders here
             comp_df = pd.DataFrame()
             for item in pipelines.items:
                 df = pd.DataFrame.from_dict(item)
+                last_row = len(df)-1
+                df = df.drop(index = (len(df)-1))
+                if pipelines.items.index(item) != 0 : #if not the first iteration, drop the column headers
+                    df = df.drop(index = [0,1])
                 comp_df = pd.concat([comp_df,df])
-            print(comp_df)
+            
 
-            #with pd.ExcelWriter(
-            #    "ReportName.xlsx",
-            #    engine = 'openpyxl',
-            #    mode = 'w'
-            #) as writer:
-            #    comp_df.to_excel(writer,
-            #                     sheet_name='sheet1',
-            #                     index = False,
-            #                     header = True,
-            #                     merge_cells = True)
+            with pd.ExcelWriter(
+                "ReportName.xlsx",
+                engine = 'openpyxl',
+                mode = 'w'
+            ) as writer:
+                comp_df.to_excel(writer,
+                                 sheet_name='sheet1',
+                                 index = False,
+                                 header = True,
+                                 merge_cells = True)
             
         reactor.stop() # type: ignore
         
