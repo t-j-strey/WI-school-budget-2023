@@ -4,8 +4,6 @@ import pandas as pd
 import numpy as np
 import io
 import logging
-import os
-
 
 class CompcostSpider(scrapy.Spider):
     name = "compcost"
@@ -20,14 +18,7 @@ class CompcostSpider(scrapy.Spider):
         yield Request(self.url,self.parse)
 
     allowed_domains = ["sfs.dpi.wi.gov"]
-    #start_urls = ["https://sfs.dpi.wi.gov/sfsdw/CompCostReport.aspx"]
-    custom_settings = {
-    #    'FEEDS' : {
-    #        'CompCostout.csv' : {
-    #            'format': 'csv'
-    #        }
-    #    }
-    }
+    custom_settings = {}
     
     def parse(self, response):
         headers = {
