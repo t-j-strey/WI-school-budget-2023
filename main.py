@@ -12,8 +12,8 @@ import pandas as pd
 PROJECT_ROOT = "D:\\Github\\WI-school-budget-2023"
 os.chdir(PROJECT_ROOT)
 
-std_reports = ["https://sfs.dpi.wi.gov/sfsdw/CompCostReport.aspx"]
-               #"https://sfs.dpi.wi.gov/sfsdw/CompRevReport.aspx"]
+std_reports = ["https://sfs.dpi.wi.gov/sfsdw/CompCostReport.aspx",
+               "https://sfs.dpi.wi.gov/sfsdw/CompRevReport.aspx"]
 start_year = 2018
 end_year = 2020 #inclusive
 
@@ -43,16 +43,20 @@ def main():
                     df = df.drop(index = [0,1])
                 comp_df = pd.concat([comp_df,df])
             
+            #format the Workbook title to use based on website scraped
+            title = report.strip("https://sfs.dpi.wi.gov/sfsdw/")
+            title = title.strip(".aspx")
+            title = title + ".xlsx"
 
             with pd.ExcelWriter(
-                "ReportName.xlsx",
+                title,
                 engine = 'openpyxl',
                 mode = 'w'
             ) as writer:
                 comp_df.to_excel(writer,
-                                 sheet_name='sheet1',
+                                 #sheet_name='sheet1',
                                  index = False,
-                                 header = True,
+                                 header = False,
                                  merge_cells = True)
             
         reactor.stop() # type: ignore
