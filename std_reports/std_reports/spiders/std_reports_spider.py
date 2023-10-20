@@ -5,11 +5,11 @@ import numpy as np
 import io
 import logging
 
-class CompcostSpider(scrapy.Spider):
-    name = "compcost"
 
+class StdReportsSpider(scrapy.Spider):
+    name = "std_reports_spider"
     def __init__(self,year=None, stdreport="", *args, **kwargs):
-        super(CompcostSpider,self).__init__(*args,**kwargs)
+        super(StdReportsSpider,self).__init__(*args,**kwargs)
         self.stryear = year
         self.url = stdreport
         logging.getLogger('scrapy').setLevel(logging.WARNING)
@@ -54,7 +54,6 @@ class CompcostSpider(scrapy.Spider):
         df.insert(1,"ID",df_district[1])
         df.insert(1,"Name",df_district[0])
         df.drop(df.columns[0],axis=1,inplace=True)
-
         #format the column header cell text to reflect new data
         df.iloc[0,0] = ""
         df.iloc[1,0] = "District Name"
