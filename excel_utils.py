@@ -26,33 +26,17 @@ def export_workbook(title,df):
 
     
     #draw frame borders
-    thick = 2
-
-    draw_frame_border(workbook,worksheet,0,0,2,3,thick)
-    draw_frame_border(workbook,worksheet,0,3,2,2,thick)
-    draw_frame_border(workbook,worksheet,0,5,2,2,thick)
-    draw_frame_border(workbook,worksheet,0,7,2,2,thick)
-    draw_frame_border(workbook,worksheet,0,9,2,2,thick)
-    draw_frame_border(workbook,worksheet,0,11,2,2,thick)
-    draw_frame_border(workbook,worksheet,0,13,2,2,thick)
-    draw_frame_border(workbook,worksheet,0,15,2,2,thick)
-
     #draw frame border function works a bit wonky...reference is from bottow row of prev commands
     #added "-2" to max_row in order to account for offset from previous border draws
+    thick = 2
+    draw_frame_border(workbook,worksheet,0,0,2,3,thick)
     draw_frame_border(workbook,worksheet,2,0,max_row-2,3,thick)
-    draw_frame_border(workbook,worksheet,2,3,max_row-2,2,thick)
-    draw_frame_border(workbook,worksheet,2,5,max_row-2,2,thick)
-    draw_frame_border(workbook,worksheet,2,7,max_row-2,2,thick)
-    draw_frame_border(workbook,worksheet,2,9,max_row-2,2,thick)
-    draw_frame_border(workbook,worksheet,2,11,max_row-2,2,thick)
-    draw_frame_border(workbook,worksheet,2,13,max_row-2,2,thick)
-    draw_frame_border(workbook,worksheet,2,15,max_row-2,2,thick)
-    
-
+    for section in range (3,max_col,2):
+        draw_frame_border(workbook,worksheet,0,section,2,2,thick)
+        draw_frame_border(workbook,worksheet,2,section,max_row-2,2,thick)
 
     #generate formats
     row0_format = workbook.add_format({'text_wrap' : True, 'bold':True}) # type: ignore
-    #row1_format = workbook.add_format({'bold': True, 'bottom': 5}) #type: ignore
     row1_format = workbook.add_format({'bold': True}) #type: ignore
 
     # format the top row
