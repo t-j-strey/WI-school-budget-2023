@@ -1,28 +1,27 @@
 
 from scrapy.utils.log import configure_logging
 from twisted.internet import reactor, defer
-from WICompCost.WICompCost.spiders.compcost import CompcostSpider
-from WICompCost.WICompCost import pipelines
+from std_reports.std_reports.spiders.std_reports_spider import StdReportsSpider
+from std_reports.std_reports import pipelines
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.project import get_project_settings
 import os
 import pandas as pd
 from excel_utils import create_title, export_workbook
 
-#PROJECT_ROOT = "D:\\Github\\WI-school-budget-2023"
 PROJECT_ROOT =  os.path.dirname(os.path.abspath(__file__))
 os.chdir(PROJECT_ROOT)
 
 
 std_reports = ["https://sfs.dpi.wi.gov/sfsdw/CompCostReport.aspx",
-               "https://sfs.dpi.wi.gov/sfsdw/CompRevReport.aspx",
-               "https://sfs.dpi.wi.gov/sfsdw/EqualizationAidReport.aspx",
-               "https://sfs.dpi.wi.gov/sfsdw/EqualizedValueReport.aspx",
-               "https://sfs.dpi.wi.gov/sfsdw/MembershipFTEReport.aspx",
-               "https://sfs.dpi.wi.gov/sfsdw/MillRateReport.aspx",
+               #"https://sfs.dpi.wi.gov/sfsdw/CompRevReport.aspx",
+               #"https://sfs.dpi.wi.gov/sfsdw/EqualizationAidReport.aspx",
+               #"https://sfs.dpi.wi.gov/sfsdw/EqualizedValueReport.aspx",
+               #"https://sfs.dpi.wi.gov/sfsdw/MembershipFTEReport.aspx",
+               #"https://sfs.dpi.wi.gov/sfsdw/MillRateReport.aspx",
                "https://sfs.dpi.wi.gov/sfsdw/RevenueLimitReport.aspx"]
 start_year = 2004
-end_year = 2022 #inclusive
+end_year = 2005 #inclusive
 
 def main():
     
@@ -30,7 +29,7 @@ def main():
         {"LOG_LEVEL":"INFO"}
     )
 
-    settings_file_path = 'WICompCost.WICompCost.settings'   #Relative Location of Settings File
+    settings_file_path = 'std_reports.std_reports.settings'   #Relative Location of Settings File
     os.environ.setdefault('SCRAPY_SETTINGS_MODULE',settings_file_path)
     settings = get_project_settings()
     runner = CrawlerRunner(settings)
@@ -40,7 +39,7 @@ def main():
         for report in std_reports:  #loop through the list of available standard reports
             
             for i in range(start_year,end_year + 1):  #loop through range of years            
-                yield runner.crawl(CompcostSpider,year = str(i),stdreport= report)
+                yield runner.crawl(StdReportsSpider,year = str(i),stdreport= report)
                 #add more spiders here
 
             comp_df = pd.DataFrame()

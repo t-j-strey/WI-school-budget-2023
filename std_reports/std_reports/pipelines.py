@@ -6,11 +6,11 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-import pandas as pd
 
 items = [] #collection of returned items
 
-class WicompcostPipeline:   
+class StdReportsPipeline:
     def process_item(self, item, spider):
         items.append(item)
+        
         

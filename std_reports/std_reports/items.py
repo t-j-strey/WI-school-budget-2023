@@ -6,7 +6,7 @@
 import scrapy
 
 
-class WicompcostItem(scrapy.Item):
+class StdReportsItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     pass
