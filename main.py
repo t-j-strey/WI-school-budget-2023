@@ -2,7 +2,7 @@
 from scrapy.utils.log import configure_logging
 from twisted.internet import reactor, defer
 from std_reports.std_reports.spiders.std_reports_spider import StdReportsSpider
-from std_reports.std_reports import pipelines
+from std_reports.std_reports import pipelines as std_report_pipeline
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.project import get_project_settings
 import os
@@ -28,7 +28,6 @@ def main():
     configure_logging(
         {"LOG_LEVEL":"INFO"}
     )
-    #small change
 
     settings_file_path = 'std_reports.std_reports.settings'   #Relative Location of Settings File
     os.environ.setdefault('SCRAPY_SETTINGS_MODULE',settings_file_path)
@@ -44,13 +43,13 @@ def main():
                 #add more spiders here
 
             comp_df = pd.DataFrame()
-            for item in pipelines.items:
+            for item in std_report_pipeline.items:
                 df = pd.DataFrame.from_dict(item)
                 df = df.drop(index = (len(df)-1)) #remove last row from table
-                if pipelines.items.index(item) != 0 : #if not the first iteration, drop the column headers
+                if std_report_pipeline.items.index(item) != 0 : #if not the first iteration, drop the column headers
                     df = df.drop(index = [0,1])
                 comp_df = pd.concat([comp_df,df])
-            pipelines.items.clear()
+            std_report_pipeline.items.clear()
 
 
 
