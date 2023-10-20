@@ -25,12 +25,12 @@ def export_workbook(title,df):
     (max_row,max_col) = df.shape
 
     #generate formats
-    text_wrap = workbook.add_format({'text_wrap' : True, 'bold':True}) # type: ignore
-    bold = workbook.add_format({'bold': True}) #type: ignore
+    row0_format = workbook.add_format({'text_wrap' : True, 'bold':True}) # type: ignore
+    row1_format = workbook.add_format({'bold': True, 'bottom': 5}) #type: ignore
 
     # format the top row
-    worksheet.set_row(0,45,text_wrap)       #Top Row Height allows 3 lines
-    worksheet.set_row(1,None,bold)
+    worksheet.set_row(0,45,row0_format)       #Top Row Height allows 3 lines
+    worksheet.set_row(1,None,row1_format)
 
 
     worksheet.set_column(0, 0, 30)  #District Name

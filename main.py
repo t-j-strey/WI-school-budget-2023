@@ -9,8 +9,10 @@ import os
 import pandas as pd
 from excel_utils import create_title, export_workbook
 
-PROJECT_ROOT = "D:\\Github\\WI-school-budget-2023"
+#PROJECT_ROOT = "D:\\Github\\WI-school-budget-2023"
+PROJECT_ROOT =  os.path.dirname(os.path.abspath(__file__))
 os.chdir(PROJECT_ROOT)
+
 
 std_reports = ["https://sfs.dpi.wi.gov/sfsdw/CompCostReport.aspx"]
               # "https://sfs.dpi.wi.gov/sfsdw/CompRevReport.aspx"]
