@@ -28,6 +28,7 @@ def main():
     configure_logging(
         {"LOG_LEVEL":"INFO"}
     )
+    #small change
 
     settings_file_path = 'std_reports.std_reports.settings'   #Relative Location of Settings File
     os.environ.setdefault('SCRAPY_SETTINGS_MODULE',settings_file_path)
