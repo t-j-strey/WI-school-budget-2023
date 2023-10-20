@@ -4,8 +4,6 @@ import pandas as pd
 import numpy as np
 import io
 import logging
-import os
-
 
 class CompcostSpider(scrapy.Spider):
     name = "compcost"
@@ -20,14 +18,7 @@ class CompcostSpider(scrapy.Spider):
         yield Request(self.url,self.parse)
 
     allowed_domains = ["sfs.dpi.wi.gov"]
-    #start_urls = ["https://sfs.dpi.wi.gov/sfsdw/CompCostReport.aspx"]
-    custom_settings = {
-    #    'FEEDS' : {
-    #        'CompCostout.csv' : {
-    #            'format': 'csv'
-    #        }
-    #    }
-    }
+    custom_settings = {}
     
     def parse(self, response):
         headers = {
@@ -51,8 +42,23 @@ class CompcostSpider(scrapy.Spider):
         df = dfs[3]
         length = len(df.index)
         yrdata = np.full((length),self.stryear)
+
+        #add a column to the dataframe indicating which year the data is from
         yrdata[0] = ""
         yrdata[1] = "Year"
-        df.insert(1,"",yrdata)
+        df.insert(1,"",yrdata) #add year # to column 1
+
+        #split the district name column so there is a separate column fro the name and the ID#
+        df_district = df[0].str.split('(',expand=True)
+        df_district[1] = df_district[1].str.replace(r'\D','',regex=True)
+        df.insert(1,"ID",df_district[1])
+        df.insert(1,"Name",df_district[0])
+        df.drop(df.columns[0],axis=1,inplace=True)
+
+        #format the column header cell text to reflect new data
+        df.iloc[0,0] = ""
+        df.iloc[1,0] = "District Name"
+        df.iloc[1,1] = "District ID"
+
         yield df.to_dict()
         
