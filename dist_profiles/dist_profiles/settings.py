@@ -63,7 +63,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    "dist_profiles.pipelines.DistProfilesPipeline": 300,
+    "dist_profiles.dist_profiles.pipelines.DistProfilesPipeline": 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

@@ -26,23 +26,23 @@ def main():
 
     @defer.inlineCallbacks #type: ignore
     def crawl():
-        for report in std_reports:  #loop through the list of available standard reports
+        #for report in std_reports:  #loop through the list of available standard reports
             
-            for i in range(start_year,end_year + 1):  #loop through range of years            
-                yield runner.crawl(DistProfilesSpdrSpider)
+         #   for i in range(start_year,end_year + 1):  #loop through range of years            
+        yield runner.crawl(DistProfilesSpdrSpider)
                 #add more spiders here
         
-            comp_df = pd.DataFrame()
-            for item in std_report_pipeline.items:
-                df = pd.DataFrame.from_dict(item)
-                df = df.drop(index = (len(df)-1)) #remove last row from table
-                if std_report_pipeline.items.index(item) != 0 : #if not the first iteration, drop the column headers
-                    df = df.drop(index = [0,1])
-                comp_df = pd.concat([comp_df,df])
-            std_report_pipeline.items.clear()
+          #  comp_df = pd.DataFrame()
+          #  for item in std_report_pipeline.items:
+           #     df = pd.DataFrame.from_dict(item)
+           #     df = df.drop(index = (len(df)-1)) #remove last row from table
+            #    if std_report_pipeline.items.index(item) != 0 : #if not the first iteration, drop the column headers
+            #       df = df.drop(index = [0,1])
+             #   comp_df = pd.concat([comp_df,df])
+            #std_report_pipeline.items.clear()
         
-            title = create_title(report) #create a Spreadsheet title from site address
-            export_workbook(title,comp_df)# take dataframe and turn it into a formatted Excel Workbook
+         #   title = create_title(report) #create a Spreadsheet title from site address
+         #   export_workbook(title,comp_df)# take dataframe and turn it into a formatted Excel Workbook
 
         reactor.stop() # type: ignore
         
