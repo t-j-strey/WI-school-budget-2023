@@ -43,18 +43,28 @@ class DistProfilesSpdrSpider(scrapy.Spider):
     def datacapture(self,response):
         iostring = io.StringIO(response.text)
         dfs = pd.read_html(iostring)
-        print("\n# of data tables: ",len(dfs))
-        candc = dfs[2]
-        print("\n Raw Code-Class Table: ",candc)
-        print(candc.iloc[0:3,2:4])
-        candc.iloc[3:10,0:2]=candc.iloc[0:3,2:4]
-        print("\n Formatted Code-Class Table: ")
-        #display(candc.to_string())
+        #Re-arrange Code-and-class table such that it is in 2 columns
+        df1 = dfs[2]
+        df2 = df1[[2,3]].copy()
+        df2.columns = ['Attribute','Value']
+        df1 = df1.drop(df1.columns[[2,3]],axis = 1)
+        df1.columns = ['Attribute','Value']
+        frame = [df1,df2]
+        candc = pd.concat(frame)
+        #print("\n Result: ,",candc)
+        #pull only current year data from table
+        df3 = dfs[3]
+        df3.drop(df3.columns[[2,3,4,5]],axis=1,inplace = True)
+        df3.rename(columns={df3.columns[0]:'Attribute'},inplace = True)
+        df3.rename(columns={df3.columns[1]:'Value'},inplace = True)
+        #print(df3)
+        result = [candc,df3]
+        print("\nOutput Dataframe: ",result)
 
 
 
+       
 
-        #print("\n Raw Data Profile Table: ",dfs[3])
 
     #    df = dfs[3]
     #    length = len(df.index)
