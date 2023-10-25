@@ -15,6 +15,7 @@ class DistProfilesSpdrSpider(scrapy.Spider):
 
     def __init__(self,year=None, stdreport="", *args, **kwargs):
         super(DistProfilesSpdrSpider,self).__init__(*args,**kwargs)
+        self.stryear = year
         logging.getLogger('scrapy').setLevel(logging.WARNING)
 
         #def start_requests(self):
@@ -29,7 +30,7 @@ class DistProfilesSpdrSpider(scrapy.Spider):
             }
             
         formdata= {
-            'ctl00$MainContent$selFiscalYear' : '2021',
+            'ctl00$MainContent$selFiscalYear' : self.stryear,
             'ctl00$MainContent$selSchoolDist' : '0007',
             'ctl00$MainContent$rbOrderListBy':	'Name',
             'ctl00$MainContent$btnSubmitAllAgencies':	'Show+Agency+Profile',
@@ -37,8 +38,8 @@ class DistProfilesSpdrSpider(scrapy.Spider):
         return FormRequest.from_response(response,
                                 formdata=formdata,
                                 headers=headers,
-                                callback=self.datacapture)
-                                #callback = self.tab2)
+                                #callback=self.datacapture)
+                                callback = self.tab2)
     
     def datacapture(self,response):
         iostring = io.StringIO(response.text)
@@ -51,29 +52,23 @@ class DistProfilesSpdrSpider(scrapy.Spider):
         df1.columns = ['Attribute','Value']
         frame = [df1,df2]
         candc = pd.concat(frame)
-        #print("\n Result: ,",candc)
         #pull only current year data from table
         df3 = dfs[3]
         df3.drop(df3.columns[[2,3,4,5]],axis=1,inplace = True)
         df3.rename(columns={df3.columns[0]:'Attribute'},inplace = True)
         df3.rename(columns={df3.columns[1]:'Value'},inplace = True)
-        #print(df3)
         result = [candc,df3]
-        print("\nOutput Dataframe: ",result)
-
-
-
-       
-
-
-    #    df = dfs[3]
-    #    length = len(df.index)
-    #    yrdata = np.full((length),self.stryear)
+        out = pd.concat(result) # this is stitched frame, containing all current year data
+        #print("\nOutput Dataframe: ",out)
+        length = len(out.index)
+        yrdata = np.full((length),self.stryear)
 
         #add a column to the dataframe indicating which year the data is from
-    #    yrdata[0] = ""
-    #    yrdata[1] = "Year"
-    #    df.insert(1,"",yrdata) #add year # to column 1
+        yrdata[0] = "Year"
+        out.insert(1,"",yrdata) #add year # to column 1
+        #print("\nOutput Dataframe: ",out)
+        rawschool = response.selector.xpath('//html/body/form/div[4]/div[2]/h2').extract()
+        print("\nSchool Name: ",rawschool)
 
         #split the district name column so there is a separate column fro the name and the ID#
     #    df_district = df[0].str.split('(',expand=True)
