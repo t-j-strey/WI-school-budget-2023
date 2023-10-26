@@ -57,16 +57,16 @@ class DistProfilesSpdrSpider(scrapy.Spider):
         df3.drop(df3.columns[[2,3,4,5]],axis=1,inplace = True)
         df3.rename(columns={df3.columns[0]:'Attribute'},inplace = True)
         df3.rename(columns={df3.columns[1]:'Value'},inplace = True)
+        df3.drop(index = [0,16,20,25],inplace = True)
         result = [candc,df3]
-        out = pd.concat(result) # this is stitched frame, containing all current year data
-        out = out.T #transpose so it is a single row of relevant data
-        print("\nOutput Dataframe: ",out)
+        dfcmplt = pd.concat(result) # this is stitched frame, containing all current year data
+        out = dfcmplt.T #transpose so it is a single row of relevant data
         length = len(out.index)
         yrdata = np.full((length),self.stryear)
 
         #add a column to the dataframe indicating which year the data is from
         yrdata[0] = "Year"
-        out.insert(1,"",yrdata) #add year # to column 1
+        out.insert(0,"",yrdata) #add year # to column 1
         #print("\nOutput Dataframe: ",out)
         rawschool = response.xpath("//html/body/form/div[2]/div[2]/h2/text()").get()
         district, sep, tail = rawschool.partition(')')
@@ -76,6 +76,13 @@ class DistProfilesSpdrSpider(scrapy.Spider):
         iddata = np.full((length),id)
         out.insert(0,"ID",iddata)
         out.insert(0,"Name",namedata)
+        #format the column header cell text to reflect new data
+        #out.iloc[0,0] = ""
+        out.iloc[0,0] = "District Name"
+        out.iloc[0,1] = "District ID"
+        #rename the column indexes so they are unique
+        out.columns=[str(i) for i in range(out.shape[1])]
+
         yield out.to_dict()
 
     def tab2(self,response):
