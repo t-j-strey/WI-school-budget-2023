@@ -34,8 +34,9 @@ def main():
         
         comp_df = pd.DataFrame()
         for item in dist_profiles_pipeline.items:
-                df = pd.DataFrame.from_dict(item)
-                df.to_excel("output.xlsx")
+                years_list = item
+                print("\nYears List: ",years_list)
+                #print("\nDistrict List: ",district_list)
 
            #     df = df.drop(index = (len(df)-1)) #remove last row from table
             #    if std_report_pipeline.items.index(item) != 0 : #if not the first iteration, drop the column headers

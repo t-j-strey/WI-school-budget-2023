@@ -45,17 +45,20 @@ class DistProfilesSpdrSpider(scrapy.Spider):
                                     headers=headers,
                                     callback=self.datacapture)
         else:
-            #inspect_response(response,self)
-            headers_list = list()
-            value_list = list()
-            for li in response.xpath('//html/body/form/div[4]/div/table/tbody/tr/td[1]/ol/li/select'):
-                print("\nli: ",li)
-                headers_list.append(li.xpath('./select/text()').get())
-                value_list.append(li.xpath('./ul/li/text()').getall())
-                print("\nHeaders List: ",headers_list)
-                print("\nValue list: ",value_list)
-            #years = response.xpath('//html/body/form/div[4]/div/table/tbody/tr/td[1]/ol/li/select/text()').getall()
-            #print(years)
+            data = pd.DataFrame
+            district_list = list()
+            years_list = list()
+            for district in response.xpath('//*[@id="ctl00_MainContent_selSchoolDist"]/option/@value').extract():
+                district_list.append(district)
+            for year in response.xpath('//*[@id="ctl00_MainContent_selFiscalYear"]/option/@value').extract():
+                years_list.append(year)
+            #return_data = dict((district_list,years_list))
+        yield years_list
+        yield district_list
+            
+            
+
+            
                                              
 
 
