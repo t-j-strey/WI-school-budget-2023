@@ -38,8 +38,8 @@ class DistProfilesSpdrSpider(scrapy.Spider):
         return FormRequest.from_response(response,
                                 formdata=formdata,
                                 headers=headers,
-                                #callback=self.datacapture)
-                                callback = self.tab2)
+                                callback=self.datacapture)
+                                #callback = self.tab2)
     
     def datacapture(self,response):
         iostring = io.StringIO(response.text)
@@ -59,7 +59,8 @@ class DistProfilesSpdrSpider(scrapy.Spider):
         df3.rename(columns={df3.columns[1]:'Value'},inplace = True)
         result = [candc,df3]
         out = pd.concat(result) # this is stitched frame, containing all current year data
-        #print("\nOutput Dataframe: ",out)
+        out = out.T #transpose so it is a single row of relevant data
+        print("\nOutput Dataframe: ",out)
         length = len(out.index)
         yrdata = np.full((length),self.stryear)
 
@@ -67,21 +68,15 @@ class DistProfilesSpdrSpider(scrapy.Spider):
         yrdata[0] = "Year"
         out.insert(1,"",yrdata) #add year # to column 1
         #print("\nOutput Dataframe: ",out)
-        rawschool = response.selector.xpath('//html/body/form/div[4]/div[2]/h2').extract()
-        print("\nSchool Name: ",rawschool)
-
-        #split the district name column so there is a separate column fro the name and the ID#
-    #    df_district = df[0].str.split('(',expand=True)
-    #    df_district[1] = df_district[1].str.replace(r'\D','',regex=True)
-    #    df.insert(1,"ID",df_district[1])
-    #    df.insert(1,"Name",df_district[0])
-    #    df.drop(df.columns[0],axis=1,inplace=True)
-        #format the column header cell text to reflect new data
-    #    df.iloc[0,0] = ""
-    #    df.iloc[1,0] = "District Name"
-    #    df.iloc[1,1] = "District ID"
-
-    #    yield df.to_dict()
+        rawschool = response.xpath("//html/body/form/div[2]/div[2]/h2/text()").get()
+        district, sep, tail = rawschool.partition(')')
+        name, sep, id = district.partition('(')
+        #create arrays full of the district name and ID
+        namedata = np.full((length),name)
+        iddata = np.full((length),id)
+        out.insert(0,"ID",iddata)
+        out.insert(0,"Name",namedata)
+        yield out.to_dict()
 
     def tab2(self,response):
         inspect_response(response,self)

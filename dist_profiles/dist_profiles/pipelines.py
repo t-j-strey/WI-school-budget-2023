@@ -7,7 +7,8 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 
+items = [] #collection of returned items
 
 class DistProfilesPipeline:
     def process_item(self, item, spider):
-        return item
+        items.append(item)
