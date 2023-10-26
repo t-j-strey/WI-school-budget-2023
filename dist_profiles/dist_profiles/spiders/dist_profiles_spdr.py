@@ -13,9 +13,11 @@ class DistProfilesSpdrSpider(scrapy.Spider):
     allowed_domains = ["sfs.dpi.wi.gov"]
     start_urls = ["https://sfs.dpi.wi.gov/sfsdw/Agency_Financial_profile.aspx"]
 
-    def __init__(self,year=None, stdreport="", *args, **kwargs):
+    def __init__(self,year=None,district = None, init = False, stdreport="", *args, **kwargs):
         super(DistProfilesSpdrSpider,self).__init__(*args,**kwargs)
         self.stryear = year
+        self.strdist = district
+        self.init = init
         logging.getLogger('scrapy').setLevel(logging.WARNING)
 
         #def start_requests(self):
@@ -31,16 +33,32 @@ class DistProfilesSpdrSpider(scrapy.Spider):
             
         formdata= {
             'ctl00$MainContent$selFiscalYear' : self.stryear,
-            'ctl00$MainContent$selSchoolDist' : '0007',
+            'ctl00$MainContent$selSchoolDist' : self.strdist,
             'ctl00$MainContent$rbOrderListBy':	'Name',
             'ctl00$MainContent$btnSubmitAllAgencies':	'Show+Agency+Profile',
         }
-        return FormRequest.from_response(response,
-                                formdata=formdata,
-                                headers=headers,
-                                callback=self.datacapture)
-                                #callback = self.tab2)
-    
+
+
+        if not self.init:
+            return FormRequest.from_response(response,
+                                    formdata=formdata,
+                                    headers=headers,
+                                    callback=self.datacapture)
+        else:
+            #inspect_response(response,self)
+            headers_list = list()
+            value_list = list()
+            for li in response.xpath('//html/body/form/div[4]/div/table/tbody/tr/td[1]/ol/li/select'):
+                print("\nli: ",li)
+                headers_list.append(li.xpath('./select/text()').get())
+                value_list.append(li.xpath('./ul/li/text()').getall())
+                print("\nHeaders List: ",headers_list)
+                print("\nValue list: ",value_list)
+            #years = response.xpath('//html/body/form/div[4]/div/table/tbody/tr/td[1]/ol/li/select/text()').getall()
+            #print(years)
+                                             
+
+
     def datacapture(self,response):
         iostring = io.StringIO(response.text)
         dfs = pd.read_html(iostring)

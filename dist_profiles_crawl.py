@@ -29,7 +29,7 @@ def main():
         #for report in std_reports:  #loop through the list of available standard reports
             
          #   for i in range(start_year,end_year + 1):  #loop through range of years            
-        yield runner.crawl(DistProfilesSpdrSpider,year = '2021')
+        yield runner.crawl(DistProfilesSpdrSpider,year = '2021',district = '0007',init =True)
                 #add more spiders here
         
         comp_df = pd.DataFrame()
