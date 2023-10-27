@@ -6,7 +6,7 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.utils.project import get_project_settings
 import os
 import pandas as pd
-from excel_utils import create_title, export_workbook
+from excel_utils import export_dist_profiles
 from scrapy.utils.log import configure_logging
 
 
@@ -38,8 +38,8 @@ def main():
                 #print("\n District List: ",result['district'])
                 years = result['years']
                 #years = ['2016','2017','2018']
-                #districts = result['district']
-                districts = ['0007']
+                districts = result['district']
+                #districts = ['0007','0014']
                 dist_profiles_pipeline.items.clear()
                 
 
@@ -55,7 +55,7 @@ def main():
         dist_profiles_pipeline.items.clear()
 
         title = 'District Profiles.xlsx' 
-        export_workbook(title,comp_df)# take dataframe and turn it into a formatted Excel Workbook
+        export_dist_profiles(title,comp_df)# take dataframe and turn it into a formatted Excel Workbook
 
         reactor.stop() # type: ignore
         
