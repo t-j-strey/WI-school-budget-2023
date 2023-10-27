@@ -8,6 +8,56 @@ def create_title(report):
     title = title + ".xlsx"
     return title
 
+def export_dist_profiles(title,df):
+    writer = pd.ExcelWriter(title,
+                                    engine = 'xlsxwriter',
+                                    mode = 'w'
+                                    )
+    df.to_excel(writer,
+                        sheet_name='Sheet1',
+                        index = False,
+                        header = False,
+                        merge_cells = True)
+    workbook = writer.book
+    
+    worksheet = writer.sheets["Sheet1"]
+    (max_row,max_col) = df.shape
+
+    #draw frame borders
+    #draw frame border function works a bit wonky...reference is from bottow row of prev commands
+    #added "-2" to max_row in order to account for offset from previous border draws
+    thick = 2
+    draw_frame_border(workbook,worksheet,0,0,1,1,thick)
+    draw_frame_border(workbook,worksheet,0,1,1,max_col,thick)
+    draw_frame_border(workbook,worksheet,1,0,max_row-1,1,thick)
+    draw_frame_border(workbook,worksheet,1,1,max_row-1,max_col,thick)
+
+    #generate formats
+    row0_format = workbook.add_format({'text_wrap' : True, 'bold':True}) # type: ignore
+   
+    # format the top row
+    worksheet.set_row(0,45,row0_format)       #Top Row Height allows 3 lines
+
+    worksheet.set_column(0, 0, 28)  #District Name
+    worksheet.set_column(1,1,10)    #District ID
+    worksheet.set_column(2,2,10)    #Year
+    worksheet.set_column(3,3,19)    #District Type
+    worksheet.set_column(4,4,5)     #CESA
+    worksheet.set_column(5,5,20)    #County
+    worksheet.set_column(6,6,11)     #Assembly District
+    worksheet.set_column(7,7,11)     #Senate District
+    worksheet.set_column(8,8,20)    #Ath.Conference
+    worksheet.set_column(9,max_col-1,15) # The rest of the columns
+        
+     #freeze the top row
+    worksheet.freeze_panes(1,0)
+    
+    #turn on autofilters
+    worksheet.autofilter(0,0,max_row,max_col -1)
+    
+    writer.close()
+
+
 
 def export_workbook(title,df):
     writer = pd.ExcelWriter(title,
