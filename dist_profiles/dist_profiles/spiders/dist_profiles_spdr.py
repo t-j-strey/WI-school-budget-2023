@@ -6,7 +6,10 @@ import io
 import logging
 from scrapy.shell import inspect_response
 
-
+class ProfileInitItem(scrapy.Item):
+    years = scrapy.Field()
+    district = scrapy.Field()
+            
 
 class DistProfilesSpdrSpider(scrapy.Spider):
     name = "dist_profiles_spdr"
@@ -40,26 +43,23 @@ class DistProfilesSpdrSpider(scrapy.Spider):
 
 
         if not self.init:
-            return FormRequest.from_response(response,
+            yield FormRequest.from_response(response,
                                     formdata=formdata,
                                     headers=headers,
                                     callback=self.datacapture)
+                                    #callback = self.tab2)
         else:
-            data = pd.DataFrame
             district_list = list()
             years_list = list()
             for district in response.xpath('//*[@id="ctl00_MainContent_selSchoolDist"]/option/@value').extract():
                 district_list.append(district)
             for year in response.xpath('//*[@id="ctl00_MainContent_selFiscalYear"]/option/@value').extract():
                 years_list.append(year)
-            #return_data = dict((district_list,years_list))
-        yield years_list
-        yield district_list
+            item = ProfileInitItem(years=years_list,district=district_list)
+            yield item
             
             
-
-            
-                                             
+                                     
 
 
     def datacapture(self,response):
@@ -88,7 +88,6 @@ class DistProfilesSpdrSpider(scrapy.Spider):
         #add a column to the dataframe indicating which year the data is from
         yrdata[0] = "Year"
         out.insert(0,"",yrdata) #add year # to column 1
-        #print("\nOutput Dataframe: ",out)
         rawschool = response.xpath("//html/body/form/div[2]/div[2]/h2/text()").get()
         district, sep, tail = rawschool.partition(')')
         name, sep, id = district.partition('(')

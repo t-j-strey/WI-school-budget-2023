@@ -34,18 +34,28 @@ def main():
         
         comp_df = pd.DataFrame()
         for item in dist_profiles_pipeline.items:
-                years_list = item
-                print("\nYears List: ",years_list)
-                #print("\nDistrict List: ",district_list)
+                result = item
+                #print("\n District List: ",result['district'])
+                years = result['years']
+                #years = ['2016','2017','2018']
+                #districts = result['district']
+                districts = ['0007']
+                dist_profiles_pipeline.items.clear()
+                
 
-           #     df = df.drop(index = (len(df)-1)) #remove last row from table
-            #    if std_report_pipeline.items.index(item) != 0 : #if not the first iteration, drop the column headers
-            #       df = df.drop(index = [0,1])
-             #   comp_df = pd.concat([comp_df,df])
-            #std_report_pipeline.items.clear()
-        
-         #   title = create_title(report) #create a Spreadsheet title from site address
-         #   export_workbook(title,comp_df)# take dataframe and turn it into a formatted Excel Workbook
+        for idistrict in districts: #type:ignore 
+            for iyear in years: #type: ignore
+                yield runner.crawl(DistProfilesSpdrSpider,year = iyear,district = idistrict,init =False)#type:ignore
+        comp_df = pd.DataFrame()
+        for item in dist_profiles_pipeline.items:
+            df = pd.DataFrame.from_dict(item)
+            if dist_profiles_pipeline.items.index(item) != 0 : #type:ignore if not the first iteration, drop the column headers 
+                df = df.drop(index = ['Attribute'])
+            comp_df = pd.concat([comp_df,df])
+        dist_profiles_pipeline.items.clear()
+
+        title = 'District Profiles.xlsx' 
+        export_workbook(title,comp_df)# take dataframe and turn it into a formatted Excel Workbook
 
         reactor.stop() # type: ignore
         
