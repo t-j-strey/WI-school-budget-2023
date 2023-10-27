@@ -26,26 +26,25 @@ def main():
 
     @defer.inlineCallbacks #type: ignore
     def crawl():
-        #for report in std_reports:  #loop through the list of available standard reports
-            
-         #   for i in range(start_year,end_year + 1):  #loop through range of years            
+        #First spider pulls all the district number and year data from the page's dropdown
         yield runner.crawl(DistProfilesSpdrSpider,year = '2021',district = '0007',init =True)
-                #add more spiders here
         
+        #return and format lists of the years and districts
         comp_df = pd.DataFrame()
         for item in dist_profiles_pipeline.items:
                 result = item
-                #print("\n District List: ",result['district'])
                 years = result['years']
                 #years = ['2016','2017','2018']
                 districts = result['district']
                 #districts = ['0007','0014']
                 dist_profiles_pipeline.items.clear()
                 
-
-        for idistrict in districts: #type:ignore 
+        #loop through the returned district and year lists to generate dataframe.  Note, this takes a while! (>1 hour)
+        for idistrict in districts: #type:ignore
             for iyear in years: #type: ignore
                 yield runner.crawl(DistProfilesSpdrSpider,year = iyear,district = idistrict,init =False)#type:ignore
+        
+        #generate dataframe from returned spider information information
         comp_df = pd.DataFrame()
         for item in dist_profiles_pipeline.items:
             df = pd.DataFrame.from_dict(item)
@@ -54,6 +53,7 @@ def main():
             comp_df = pd.concat([comp_df,df])
         dist_profiles_pipeline.items.clear()
 
+        #build the excel spreadsheet
         title = 'District Profiles.xlsx' 
         export_dist_profiles(title,comp_df)# take dataframe and turn it into a formatted Excel Workbook
 

@@ -23,9 +23,6 @@ class DistProfilesSpdrSpider(scrapy.Spider):
         self.init = init
         logging.getLogger('scrapy').setLevel(logging.WARNING)
 
-        #def start_requests(self):
-        #yield Request(self.url,self.parse)
-
     allowed_domains = ["sfs.dpi.wi.gov"]
     custom_settings = {}
 
@@ -43,12 +40,14 @@ class DistProfilesSpdrSpider(scrapy.Spider):
 
 
         if not self.init:
+            #use the passed form data to request profile data fro specific district and year
             yield FormRequest.from_response(response,
                                     formdata=formdata,
                                     headers=headers,
                                     callback=self.datacapture)
-                                    #callback = self.tab2)
+                            
         else:
+            #generate lists of the available year and districts. 
             district_list = list()
             years_list = list()
             for district in response.xpath('//*[@id="ctl00_MainContent_selSchoolDist"]/option/@value').extract():
@@ -58,10 +57,7 @@ class DistProfilesSpdrSpider(scrapy.Spider):
             item = ProfileInitItem(years=years_list,district=district_list)
             yield item
             
-            
-                                     
-
-
+                         
     def datacapture(self,response):
         iostring = io.StringIO(response.text)
         dfs = pd.read_html(iostring)
@@ -88,7 +84,7 @@ class DistProfilesSpdrSpider(scrapy.Spider):
         #add a column to the dataframe indicating which year the data is from
         yrdata[0] = "Year"
         out.insert(0,"",yrdata) #add year # to column 1
-        rawschool = response.xpath("//html/body/form/div[2]/div[2]/h2/text()").get()
+        rawschool = response.xpath("//html/body/form/div[2]/div[2]/h2/text()").get() #Get the district name and ID # from HTML text
         district, sep, tail = rawschool.partition(')')
         name, sep, id = district.partition('(')
         #create arrays full of the district name and ID
@@ -102,8 +98,5 @@ class DistProfilesSpdrSpider(scrapy.Spider):
         out.iloc[0,1] = "District ID"
         #rename the column indexes so they are unique
         out.columns=[str(i) for i in range(out.shape[1])]
-
+        #send data frame to pipeline
         yield out.to_dict()
-
-    def tab2(self,response):
-        inspect_response(response,self)
