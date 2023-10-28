@@ -11,7 +11,12 @@ class BudgetDataSpdrSpider(scrapy.Spider):
     def parse(self, response):
         for result1 in response.xpath('//div[@class="template-inner"]'):
             print("\n\n\nLooping through results: ")
-            print(result1.xpath('.//a[@href]').extract())
-            #for result2 in result1.xpath('//')
-            #print(result.xpath('.//a')[0])
+           
+            for result2 in result1.xpath('.//a/@href[(contains(., "Descriptions"))]'):
+                print("\nDescriptions: ", result2.extract())
+            for result3 in result1.xpath('.//a/@href[(contains(., "AtoZ"))]'): #returns only AtoZ URLs
+                print("\nBudget Data: ",result3.extract())
+            
+        
+            
         #inspect_response(response,self)
