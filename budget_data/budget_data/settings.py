@@ -63,8 +63,10 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    "budget_data.budget_data.pipelines.BudgetDataPipeline": 300,
+    #"budget_data.budget_data.pipelines.BudgetDataPipeline": 300,
+    'scrapy.pipelines.files.FilesPipeline': 1,
 }
+FILES_STORE = r"D:\github\WI-SCHOOL-BUDGET-2023\budget_data\downloads"
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

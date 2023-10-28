@@ -1,5 +1,6 @@
 import scrapy
 from scrapy.shell import inspect_response
+from budget_data.budget_data.items import BudgetDataItem
 
 
 
@@ -10,13 +11,19 @@ class BudgetDataSpdrSpider(scrapy.Spider):
 
     def parse(self, response):
         for result1 in response.xpath('//div[@class="template-inner"]'):
-            print("\n\n\nLooping through results: ")
-           
-            for result2 in result1.xpath('.//a/@href[(contains(., "Descriptions"))]'):
-                print("\nDescriptions: ", result2.extract())
+            for result2 in result1.xpath('.//a/@href[(contains(., "Descriptions"))]'): #returns Account Descriptions
+                file_url =  "https://dpi.wi.gov/" + result2.extract()
+                print("\nDescriptions URLs: ", file_url)
+                item = BudgetDataItem()
+                item['file_urls'] = [file_url]
+                yield item
+
             for result3 in result1.xpath('.//a/@href[(contains(., "AtoZ"))]'): #returns only AtoZ URLs
                 print("\nBudget Data: ",result3.extract())
+                file_url =  "https://dpi.wi.gov/" + result3.extract()
+                item = BudgetDataItem()
+                item['file_urls'] = [file_url]
+                yield item
             
-        
-            
+    
         #inspect_response(response,self)
