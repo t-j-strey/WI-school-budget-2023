@@ -25,11 +25,6 @@ class BudgetDataPipeline(FilesPipeline):
       file_name = media_guid.rsplit('/',1)[1]
       print("\n\nFile Name: ",file_name)
       return f"full/{file_name}"
-
-   def get_media_requests(self, item, info):
-      urls = ItemAdapter(item).get(self.files_urls_field, [])
-      print("\n\n\n URL: ",urls)
-      return [scrapy.Request(u, callback=NO_CALLBACK) for u in urls]
    
    #def process_item(self, item, spider):
    #     items.append(item)
