@@ -10,7 +10,7 @@ class BudgetDataSpdrSpider(scrapy.Spider):
     start_urls = ["https://dpi.wi.gov/sfs/reporting/safr/budget/data-download"]
 
 
-    
+
     def parse(self, response):
         for result1 in response.xpath('//div[@class="template-inner"]'):
             for result2 in result1.xpath('.//a/@href[(contains(., "Descriptions"))]'): #returns Account Descriptions
@@ -20,12 +20,12 @@ class BudgetDataSpdrSpider(scrapy.Spider):
                 item['file_urls'] = [file_url]
                 yield item
 
-            #for result3 in result1.xpath('.//a/@href[(contains(., "AtoZ"))]'): #returns only AtoZ URLs
-            #    print("\nBudget Data: ",result3.extract())
-            #    file_url =  "https://dpi.wi.gov/" + result3.extract()
-            #    item = BudgetDataItem()
-            #    item['file_urls'] = [file_url]
-            #    yield item
+            for result3 in result1.xpath('.//a/@href[(contains(., "AtoZ"))]'): #returns only AtoZ URLs
+                print("\nBudget Data: ",result3.extract())
+                file_url =  "https://dpi.wi.gov/" + result3.extract()
+                item = BudgetDataItem()
+                item['file_urls'] = [file_url]
+                yield item
             
     
         #inspect_response(response,self)
