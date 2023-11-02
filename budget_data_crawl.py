@@ -21,7 +21,7 @@ def main():
         {"LOG_LEVEL":"INFO"}
     )
     start_year = 2012
-    end_year = 2012
+    end_year = 2013
     settings_file_path = 'budget_data.budget_data.settings'   #Relative Location of Settings File
     os.environ.setdefault('SCRAPY_SETTINGS_MODULE',settings_file_path)
     settings = get_project_settings()
@@ -33,22 +33,28 @@ def main():
     #    reactor.stop() # type: ignore      
     #crawl()  
     #reactor.run() # type: ignore
+    out = pd.DataFrame()
 
     for i in range(start_year,end_year+1):
-        desc_file = FILES_STORE + '\\full\\'+ str(i) + '-' + str(i+1) + '-01-Budget-Account-Descriptions.csv'
+
+        desc_file = FILES_STORE + '\\full\\'+ str(i) + '-' + str(i+1) + '-Budget-Account-Descriptions.csv'
+        print("\n\n Description File: ",desc_file)
         df_desc = pd.read_csv(desc_file)
-        budget_file = FILES_STORE + '\\full\\'+ str(i) + '-' + str(i+1) + '-01-Budget-Data-AtoZ-with-Rollups.csv'
+        budget_file = FILES_STORE + '\\full\\'+ str(i) + '-' + str(i+1) + '-Budget-Data-AtoZ-with-Rollups.csv'
         df_budget = pd.read_csv(budget_file)
         df_budget.rename(columns = {'COA_ACCT':'ACCOUNTNUMBER'},inplace= True)
-        out = pd.merge(df_budget,df_desc,on="ACCOUNTNUMBER",how = "left")
-        out = out.reindex(columns = ['FISCAL_YEAR', 'REPORT_TYPE', 'DISTRICT_ NMBR', 'DISTRICT_NAME',
-       'ACCOUNTNUMBER', 'DESCRIPTION', 'ACCTTYPE', 'AMOUNT'])
-        out.to_csv('output.csv')
+        df_budget.rename(columns = {'AMOUNT': str(i)},inplace=True)
+        yrdata = pd.merge(df_budget,df_desc,on="ACCOUNTNUMBER",how = "left")
+        yrdata = yrdata.reindex(columns = ['FISCAL_YEAR', 'REPORT_TYPE', 'DISTRICT_ NMBR', 'DISTRICT_NAME','ACCOUNTNUMBER', 'DESCRIPTION', 'ACCTTYPE', str(i)])
+        yrdata.drop(labels=['FISCAL_YEAR','REPORT_TYPE'] ,axis = 1,inplace=True)
+        if i == start_year:
+            out = yrdata
+        else:    
+            out = pd.merge(out,yrdata,on="ACCOUNTNUMBER",how = "left")
+
+        out.to_csv('Output.csv')
 
 
-
-
-        
  #this only runs if the module was *not* imported
 if __name__ == "__main__":
     main()
