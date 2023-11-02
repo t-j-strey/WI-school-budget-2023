@@ -36,14 +36,19 @@ def main():
 
     for i in range(start_year,end_year+1):
         desc_file = FILES_STORE + '\\full\\'+ str(i) + '-' + str(i+1) + '-01-Budget-Account-Descriptions.csv'
-        #print(desc_file)
         df_desc = pd.read_csv(desc_file)
         budget_file = FILES_STORE + '\\full\\'+ str(i) + '-' + str(i+1) + '-01-Budget-Data-AtoZ-with-Rollups.csv'
         df_budget = pd.read_csv(budget_file)
-        #print(df_desc,df_budget)
-        out = pd.concat([df_budget,df_desc],axis = 1,join = 'inner' )
-        print(out)
+        df_budget.rename(columns = {'COA_ACCT':'ACCOUNTNUMBER'},inplace= True)
+        out = pd.merge(df_budget,df_desc,on="ACCOUNTNUMBER",how = "left")
+        out = out.reindex(columns = ['FISCAL_YEAR', 'REPORT_TYPE', 'DISTRICT_ NMBR', 'DISTRICT_NAME',
+       'ACCOUNTNUMBER', 'DESCRIPTION', 'ACCTTYPE', 'AMOUNT'])
         out.to_csv('output.csv')
+
+
+
+
+        
  #this only runs if the module was *not* imported
 if __name__ == "__main__":
     main()
