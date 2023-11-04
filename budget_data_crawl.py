@@ -21,7 +21,7 @@ def main():
         {"LOG_LEVEL":"INFO"}
     )
     start_year = 2012
-    end_year = 2013
+    end_year = 2019
     settings_file_path = 'budget_data.budget_data.settings'   #Relative Location of Settings File
     os.environ.setdefault('SCRAPY_SETTINGS_MODULE',settings_file_path)
     settings = get_project_settings()
@@ -36,22 +36,80 @@ def main():
     out = pd.DataFrame()
 
     for i in range(start_year,end_year+1):
+        print("\n\n i: ",i)
+        #format description files to generate consistent dataframe.  format changes over the years
+        if i >= 2012 and i <=2013:
+            desc_file = FILES_STORE + '\\full\\'+ str(i) + '-' + str(i+1) + '-Budget-Account-Descriptions.csv'
+            df_desc = pd.read_csv(desc_file,encoding = "ISO-8859-1")
+            cols_name = ['Account Number','Description']
+            df_desc.columns = cols_name
+            df_desc_rdy = df_desc
+           
 
-        desc_file = FILES_STORE + '\\full\\'+ str(i) + '-' + str(i+1) + '-Budget-Account-Descriptions.csv'
-        print("\n\n Description File: ",desc_file)
-        df_desc = pd.read_csv(desc_file)
-        budget_file = FILES_STORE + '\\full\\'+ str(i) + '-' + str(i+1) + '-Budget-Data-AtoZ-with-Rollups.csv'
-        df_budget = pd.read_csv(budget_file)
-        df_budget.rename(columns = {'COA_ACCT':'ACCOUNTNUMBER'},inplace= True)
-        df_budget.rename(columns = {'AMOUNT': str(i)},inplace=True)
-        yrdata = pd.merge(df_budget,df_desc,on="ACCOUNTNUMBER",how = "left")
-        yrdata = yrdata.reindex(columns = ['FISCAL_YEAR', 'REPORT_TYPE', 'DISTRICT_ NMBR', 'DISTRICT_NAME','ACCOUNTNUMBER', 'DESCRIPTION', 'ACCTTYPE', str(i)])
-        yrdata.drop(labels=['FISCAL_YEAR','REPORT_TYPE'] ,axis = 1,inplace=True)
+        elif i > 2013 and i <= 2017:
+            desc_file = FILES_STORE + '\\full\\'+ str(i) + '-' + str(i+1) + '-Budget-Account-Descriptions.csv'
+            df_desc = pd.read_csv(desc_file,encoding = "ISO-8859-1")
+            df_desc.drop(df_desc.columns[[0,1]],axis = 1, inplace=True)
+            cols_name = ['Account Number','Description']
+            df_desc.columns = cols_name
+            df_desc_rdy = df_desc
+           
+
+        elif i >= 2018:
+            desc_file = FILES_STORE + '\\full\\'+ str(i) + '-' + str(i+1) + '-Budget-Account-Descriptions.xlsx'
+            df_temp = pd.read_excel(desc_file,index_col=None,dtype=str)
+            df_temp.drop(df_temp.columns[[0,1,2,8]],axis=1,inplace=True)
+            #rename the columns so they are consistent each year
+            cols_name = ['Fund','Account Type','Function','Subfunction','Object/Source','Description']
+            df_temp.columns = cols_name
+            cols_merge = ['Fund','Account Type','Function','Subfunction','Object/Source']
+            df_temp['ACCOUNTNUMBER'] = df_temp[cols_merge].apply(
+                lambda x: ''.join(x.dropna()),
+                axis=1
+                )
+            df_temp.drop(cols_merge,axis=1,inplace=True)
+            swap_cols = ['ACCOUNTNUMBER','Description']
+            df_temp=df_temp.reindex(columns = swap_cols)
+            cols_name = ['Account Number','Description']
+            df_temp.columns = cols_name
+            df_desc_rdy = df_temp
+            
+        else:
+            desc_file = ""
+            df_desc = pd.read_csv(desc_file,encoding = "ISO-8859-1")
+            df_desc_rdy = df_desc
+        
+
+        #format description files to generate consistent dataframe.  format changes over the years
+        budget_file = FILES_STORE + '\\full\\'+ str(i) + '-' + str(i+1) + '-Budget-Data-AtoZ-with-Rollups'
+        
+        if i <2018:
+            budget_file = budget_file +'.csv'
+            df_budget = pd.read_csv(budget_file,encoding = "ISO-8859-1",dtype=str)
+        else:
+            budget_file = budget_file+'.xlsx'
+            df_budget = pd.read_excel(desc_file,index_col=None,dtype=str)
+        if i == 2012:
+            print("\n",budget_file)    
+            cols_name = ['Fiscal Year','Report Type','District Number','District Name','Account Number','Account Type',str(i)]
+        elif i == 2013:
+            cols_name = ['Fiscal Year','District Number','District Name','Account Number','Account Type',str(i)]
+        else:
+            cols_name = ['Fiscal Year','Report Type','District Number','District Name','Account Number',str(i)] 
+        df_budget.columns = cols_name
+
+
+        yrdata = pd.merge(df_budget,df_desc_rdy,on="Account Number",how = "left")
+        yrdata = yrdata.reindex(columns = ['Fiscal Year','Report Type','District Number','District Name','Account Number', 'Description', 'Account Type', str(i)])
+        yrdata.drop(labels=['Fiscal Year','Report Type'] ,axis = 1,inplace=True)
+        yrdata['Account Number'] = yrdata['Account Number'].apply(lambda x: x.replace(' ', ''))
+        print("\n\n Year Data DF: ",yrdata)
         if i == start_year:
             out = yrdata
         else:    
-            out = pd.merge(out,yrdata,on="ACCOUNTNUMBER",how = "left")
-
+            out = pd.merge(out,yrdata,on=["District Number","District Name","Account Number","Account Type"],how = "left")
+          
+        print(out)
         out.to_csv('Output.csv')
 
 
