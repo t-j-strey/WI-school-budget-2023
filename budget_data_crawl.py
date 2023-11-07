@@ -40,7 +40,7 @@ def main():
         #format description files to generate consistent dataframe.  format changes over the years
         if i >= 2012 and i <=2013:
             desc_file = FILES_STORE + '\\full\\'+ str(i) + '-' + str(i+1) + '-Budget-Account-Descriptions.csv'
-            df_desc = pd.read_csv(desc_file,encoding = "ISO-8859-1")
+            df_desc = pd.read_csv(desc_file,encoding = "ISO-8859-1",dtype=str)
             cols_name = ['Account Number','Description']
             df_desc.columns = cols_name
             df_desc_rdy = df_desc
@@ -48,7 +48,7 @@ def main():
 
         elif i > 2013 and i <= 2017:
             desc_file = FILES_STORE + '\\full\\'+ str(i) + '-' + str(i+1) + '-Budget-Account-Descriptions.csv'
-            df_desc = pd.read_csv(desc_file,encoding = "ISO-8859-1")
+            df_desc = pd.read_csv(desc_file,encoding = "ISO-8859-1",dtype=str)
             df_desc.drop(df_desc.columns[[0,1]],axis = 1, inplace=True)
             cols_name = ['Account Number','Description']
             df_desc.columns = cols_name
@@ -81,33 +81,32 @@ def main():
         
 
         #format description files to generate consistent dataframe.  format changes over the years
-        budget_file = FILES_STORE + '\\full\\'+ str(i) + '-' + str(i+1) + '-Budget-Data-AtoZ-with-Rollups'
-        
-        if i <2018:
-            budget_file = budget_file +'.csv'
-            df_budget = pd.read_csv(budget_file,encoding = "ISO-8859-1",dtype=str)
-        else:
-            budget_file = budget_file+'.xlsx'
-            df_budget = pd.read_excel(desc_file,index_col=None,dtype=str)
+        budget_file = FILES_STORE + '\\full\\'+ str(i) + '-' + str(i+1) + '-Budget-Data-AtoZ-with-Rollups.csv'
+        df_budget = pd.read_csv(budget_file,encoding = "ISO-8859-1",dtype=str)
+
         if i == 2012:
-            print("\n",budget_file)    
+            print("\n",budget_file)  
+            
             cols_name = ['Fiscal Year','Report Type','District Number','District Name','Account Number','Account Type',str(i)]
         elif i == 2013:
             cols_name = ['Fiscal Year','District Number','District Name','Account Number','Account Type',str(i)]
-        else:
+        else: 
             cols_name = ['Fiscal Year','Report Type','District Number','District Name','Account Number',str(i)] 
+        
         df_budget.columns = cols_name
-
 
         yrdata = pd.merge(df_budget,df_desc_rdy,on="Account Number",how = "left")
         yrdata = yrdata.reindex(columns = ['Fiscal Year','Report Type','District Number','District Name','Account Number', 'Description', 'Account Type', str(i)])
         yrdata.drop(labels=['Fiscal Year','Report Type'] ,axis = 1,inplace=True)
         yrdata['Account Number'] = yrdata['Account Number'].apply(lambda x: x.replace(' ', ''))
         print("\n\n Year Data DF: ",yrdata)
+        yrdata.rename(columns={'Description': 'Description '+ str(i)},inplace=True)
         if i == start_year:
             out = yrdata
-        else:    
-            out = pd.merge(out,yrdata,on=["District Number","District Name","Account Number","Account Type"],how = "left")
+        else:     
+            yrdata.drop(labels= 'Account Type',axis=1, inplace = True)
+
+            out = pd.merge(out,yrdata,on=["District Number","District Name","Account Number"],how = "left")
           
         print(out)
         out.to_csv('Output.csv')
