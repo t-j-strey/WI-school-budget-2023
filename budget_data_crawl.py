@@ -94,7 +94,8 @@ def main():
             cols_name = ['Fiscal Year','Report Type','District Number','District Name','Account Number',str(i)] 
         
         df_budget.columns = cols_name
-
+        if 'Report Type' in df_budget:
+            df_budget.drop(columns='Report Type',inplace = True)
         yrdata = pd.merge(df_budget,df_desc_rdy,on="Account Number",how = "left")
         yrdata = yrdata.reindex(columns = ['Fiscal Year','Report Type','District Number','District Name','Account Number', 'Description', 'Account Type', str(i)])
         yrdata.drop(labels=['Fiscal Year','Report Type'] ,axis = 1,inplace=True)
