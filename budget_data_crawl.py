@@ -85,8 +85,6 @@ def main():
         df_budget = pd.read_csv(budget_file,encoding = "ISO-8859-1",dtype=str)
 
         if i == 2012:
-            print("\n",budget_file)  
-            
             cols_name = ['Fiscal Year','Report Type','District Number','District Name','Account Number','Account Type',str(i)]
         elif i == 2013:
             cols_name = ['Fiscal Year','District Number','District Name','Account Number','Account Type',str(i)]
@@ -96,20 +94,21 @@ def main():
         df_budget.columns = cols_name
         if 'Report Type' in df_budget:
             df_budget.drop(columns='Report Type',inplace = True)
+
         yrdata = pd.merge(df_budget,df_desc_rdy,on="Account Number",how = "left")
         yrdata = yrdata.reindex(columns = ['Fiscal Year','Report Type','District Number','District Name','Account Number', 'Description', 'Account Type', str(i)])
         yrdata.drop(labels=['Fiscal Year','Report Type'] ,axis = 1,inplace=True)
         yrdata['Account Number'] = yrdata['Account Number'].apply(lambda x: x.replace(' ', ''))
-        print("\n\n Year Data DF: ",yrdata)
         yrdata.rename(columns={'Description': 'Description '+ str(i)},inplace=True)
+        yrdata.rename(columns={'District Number': 'District Number '+ str(i)},inplace=True)
         if i == start_year:
             out = yrdata
         else:     
-            yrdata.drop(labels= 'Account Type',axis=1, inplace = True)
-
-            out = pd.merge(out,yrdata,on=["District Number","District Name","Account Number"],how = "left")
-          
-        print(out)
+            if 'Account Type' in yrdata:
+                yrdata.drop(columns=['Account Type'],inplace = True)
+            outtemp = out
+            out = pd.merge(outtemp,yrdata,on=["District Name","Account Number"],how = "outer")
+            print(out.size)
         out.to_csv('Output.csv')
 
 
